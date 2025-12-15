@@ -15,7 +15,7 @@ $(LIBFT):
 
 $(NAME): $(LIBFT) $(SRC)
 	@echo "Compiling 2048..."
-	@$(CC) $(CFLAGS) $(SRC) $(LIBFT) -o $(NAME)
+	@$(CC) $(CFLAGS) $(SRC) $(LIBFT) -o $(NAME) -lncurses
 
 clean:
 	@echo "Cleaning libft..."
