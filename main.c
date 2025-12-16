@@ -1,8 +1,19 @@
 #include "game.h"
-// #include "libft/include/libft.h"
-// #include <ncurses.h>
-// #include <stdlib.h>
-// #include <time.h>
+
+int isPowerOfTwo(int n)
+{
+    if (n <= 0)
+        return (0);
+
+    while (n > 1)
+    {
+        if (n % 2 != 0)
+            return (0);
+        
+        n = n / 2;
+    }
+    return (1);
+}
 
 // Function to initialize the empty grid
 void initGrid(int grid[GRID_SIZE][GRID_SIZE])
@@ -12,33 +23,39 @@ void initGrid(int grid[GRID_SIZE][GRID_SIZE])
             grid[y][x] = 0;
 }
 
-// Function to add a random number (2 or 4) in an empty cell
-void addRandomTile(int grid[GRID_SIZE][GRID_SIZE])
+// Function to check if there is any free space in the grid
+bool freeSpace(int grid[GRID_SIZE][GRID_SIZE])
 {
-    int emptyCells[GRID_SIZE * GRID_SIZE][2];
-    int count = 0;
-    
-    // Find all empty cells
-    for (int y = 0; y < GRID_SIZE; y++)
-    {
-        for (int x = 0; x < GRID_SIZE; x++)
-        {
-            if (grid[y][x] == 0)
-            {
-                emptyCells[count][0] = y;
-                emptyCells[count][1] = x;
-                count++;
-            }
-        }
-    }
-    
-    // If there are empty cells, add a number
-    if (count > 0)
-    {
-        int index = rand() % count;
-        int value = (rand() % 10 < 9) ? 2 : 4;  // 90% probability of 2, 10% of 4
-        grid[emptyCells[index][0]][emptyCells[index][1]] = value;
-    }
+	for (int y = 0; y < GRID_SIZE; y++)
+	{
+		for (int x = 0; x < GRID_SIZE; x++)
+		{
+			if (grid[y][x] == 0)
+				return true;
+		}
+	}
+	return false;
+}
+
+// Function to add a random number (2 or 4) in an empty cell
+void addNewNumber(int grid[GRID_SIZE][GRID_SIZE])
+{
+	if (!freeSpace(grid))
+		return;
+
+	int newNumber = 2;
+	if (rand() % 10 == 0)
+		newNumber = 4;
+
+	int posX = rand() % GRID_SIZE;
+	int posY = rand() % GRID_SIZE;
+	while (grid[posX][posY] != 0)
+	{
+		posX = rand() % GRID_SIZE;
+		posY = rand() % GRID_SIZE;
+	}
+
+	grid[posX][posY] = newNumber;
 }
 // funzionante
 // static void printNumber(int nb, int y, int x)
@@ -134,21 +151,53 @@ void printGrid(int grid[GRID_SIZE][GRID_SIZE], int score)
     refresh();
 }
 
-/* static void	colorSample(void)
+
+bool canMove(int grid[GRID_SIZE][GRID_SIZE])
 {
-	int row = 15;
-	short	pair = 0;
-	for (int i = 2; i <= 2048; i *= 2)
+	// Check horizontal moves
+	for (int y = 0; y < GRID_SIZE; y++)
 	{
-		pair = getPair(i);
-		attron(COLOR_PAIR(pair));
-		mvprintw(15 + i, 40, " %d ", i);
-		attroff(COLOR_PAIR(pair));
+		for (int x = 0; x < GRID_SIZE - 1; x++)
+		{
+			if (grid[y][x] == grid[y][x + 1])
+				return true;
+		}
 	}
-} */
+	
+	// Check vertical moves
+	for (int x = 0; x < GRID_SIZE; x++)
+	{
+		for (int y = 0; y < GRID_SIZE - 1; y++)
+		{
+			if (grid[y][x] == grid[y + 1][x])
+				return true;
+		}
+	}
+	
+	return false;
+}
+
+bool hasWon(int grid[GRID_SIZE][GRID_SIZE])
+{
+	for (int y = 0; y < GRID_SIZE; y++)
+	{
+		for (int x = 0; x < GRID_SIZE; x++)
+		{
+			if (grid[y][x] == WIN_VALUE)
+				return true;
+		}
+	}
+	return false;
+}
 
 int main()
 {
+	if (!isPowerOfTwo(WIN_VALUE))
+	{
+		ft_printf("Error: WIN_VALUE (%d) is not a power of two.\n", WIN_VALUE);
+		return 1;
+	}
+
     int grid[GRID_SIZE][GRID_SIZE];
     int score = 0;
     int ch;
@@ -156,7 +205,7 @@ int main()
     srand(time(NULL));
     
     // Initialize ncurses
-    initscr();
+	initscr();				//Avvia la modalità ncurses
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
@@ -164,33 +213,46 @@ int main()
     start_color();
 	init_colors();
 
-
     // Initialize the grid
     initGrid(grid);
     
     // Add two initial numbers
-    addRandomTile(grid);
-    addRandomTile(grid);
+    addNewNumber(grid);
+	addNewNumber(grid);
     
     // Game loop
     while (1)
     {
         printGrid(grid, score);
+		if (!freeSpace(grid) && !canMove(grid))
+		{
+			mvprintw(GRID_SIZE * 2 + 5, 0, "Game over! Final score: %d", score);
+			mvprintw(GRID_SIZE * 2 + 6, 0, "Press any key to exit.");
+			getch();
+			break;
+		}
+		
         ch = getch();
-        
+
+		bool moved = false;
+
         switch (ch)
         {
             case KEY_UP:
-                moveUp(grid, &score);
+                if (moveUp(grid, &score))
+					moved = true;
                 break;
             case KEY_DOWN:
-                moveDown(grid, &score);
+                if (moveDown(grid, &score))
+					moved = true;
                 break;
             case KEY_LEFT:
-                moveLeft(grid, &score);
+                if (moveLeft(grid, &score))
+					moved = true;
                 break;
             case KEY_RIGHT:
-                moveRight(grid, &score);
+                if (moveRight(grid, &score))
+					moved = true;
                 break;
             case 27:  // ESC
                 endwin();
@@ -200,8 +262,21 @@ int main()
                 continue;
         }
 	
+		if (!moved) continue;
+
+		// Check for win condition
+		if (moved && hasWon(grid))
+		{
+			printGrid(grid, score);
+			mvprintw(GRID_SIZE * 2 + 5, 0, "You won! Score: %d.                  ", score);
+			mvprintw(GRID_SIZE * 2 + 6, 0, "Press any key to continue or ESC to exit.");
+			ch = getch();
+			if (ch == 27)
+				break;
+		}
+	
         // After each valid move, add a new number
-        addRandomTile(grid);
+		addNewNumber(grid);
         refresh();
     }
     
@@ -211,10 +286,6 @@ int main()
 
 /* 
  *	TODO:
- *	Se non c'e nessun si muove niente non devo aggiungere un nuovo numero
- * 	Implementare la condizione di vittoria (2048)
- *  Implementare la condizione di sconfitta (nessuna mossa possibile)
+ * 	FAre in modo che venga stampata una solo volta YOU WIN quando si raggiunge WIN_VALUE
  *  
- *	Mettere vecchia creazione nuemri random
- * 
 */

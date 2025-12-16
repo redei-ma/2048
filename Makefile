@@ -13,7 +13,7 @@ $(LIBFT):
 	@echo "Compiling libft..."
 	@$(MAKE) -C $(LIBFT_DIR) --quiet
 
-$(NAME): $(LIBFT) $(SRC)
+$(NAME): $(LIBFT) $(SRC) game.h
 	@echo "Compiling 2048..."
 	@$(CC) $(CFLAGS) $(SRC) $(LIBFT) -o $(NAME) -lncurses
 
