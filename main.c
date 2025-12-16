@@ -17,6 +17,7 @@ int main()
     
     // Initialize ncurses
 	initscr();				//Avvia la modalità ncurses
+	mousemask(ALL_MOUSE_EVENTS, NULL);
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
@@ -67,6 +68,8 @@ int main()
                 if (moveRight(grid, &score))
 					moved = true;
                 break;
+			case KEY_MOUSE:
+				continue;
             case 27:  // ESC
                 closeGame(score);
                 return 0;
@@ -92,7 +95,6 @@ int main()
 				break;
 			}
 		}
-	
         // After each valid move, add a new number
 		addNewNumber(grid);
         refresh();
@@ -101,8 +103,3 @@ int main()
     endwin();
     return 0;
 }
-
-/* 
- *	TODO:
- * 	FAre in modo che venga stampata una solo volta YOU WIN quando si raggiunge WIN_VALUE
-*/

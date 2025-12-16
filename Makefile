@@ -28,5 +28,10 @@ fclean: clean
 
 re: fclean all
 
+supp: re
+	@echo "Running 2048 with Valgrind..."
+	valgrind --suppressions=ncurses.supp ./$(NAME)
+	
+
 .PHONY: all clean fclean re
 .SILENT:

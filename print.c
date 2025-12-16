@@ -6,7 +6,7 @@
 /*   By: redei-ma <redei-ma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 11:37:20 by cacorrea          #+#    #+#             */
-/*   Updated: 2025/12/16 14:31:26 by redei-ma         ###   ########.fr       */
+/*   Updated: 2025/12/16 20:12:09 by redei-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	init_colors(void)
 		ft_printf("The terminal does not support colors\n");
 		return;
 	}
-	
+
 	init_color(C2, 1000, 1000, 800);
 	init_color(C4, 1000, 800, 600);
 	init_color(C8, 1000, 600, 600);
@@ -96,7 +96,7 @@ void printGrid(int grid[GRID_SIZE][GRID_SIZE], int score)
 {
     clear();
 
-    mvprintw(0, 0, "============== 2048 ==============");
+    mvprintw(0, 0, "=============== 2048 ===============");
     mvprintw(1, 0, "Score: %d", score);
     mvprintw(2, 0, "");
     
