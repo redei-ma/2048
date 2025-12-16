@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -Werror -g
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRC = main.c movement.c colors.c
+SRC = main.c movement.c print.c utils.c
 
 all: $(NAME)
 

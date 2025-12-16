@@ -9,23 +9,23 @@
 
 enum e_const
 {
-	WIN_VALUE = 128,
+	WIN_VALUE = 2048,
 	GRID_SIZE = 4
 };
 
 enum
 {
 	C2 = 10,
-	C4 = 11,
-	C8 = 12,
-	C16 = 13,
-	C32= 14,
-	C64 = 15,
-	C128 = 16,
-	C256 = 17,
-	C512 = 18,
-	C1024 = 19,
-	C2048 = 20
+	C4,
+	C8,
+	C16,
+	C32,
+	C64,
+	C128,
+	C256,
+	C512,
+	C1024,
+	C2048
 };
 
 enum
@@ -48,6 +48,16 @@ bool	moveUp(int grid[GRID_SIZE][GRID_SIZE], int *score);
 bool	moveDown(int grid[GRID_SIZE][GRID_SIZE], int *score);
 bool	moveLeft(int grid[GRID_SIZE][GRID_SIZE], int *score);
 bool	moveRight(int grid[GRID_SIZE][GRID_SIZE], int *score);
+
 void	init_colors(void);
+void	printGrid(int grid[GRID_SIZE][GRID_SIZE], int score);
+
+bool	isPowerOfTwo(int n);
+bool	freeSpace(int grid[GRID_SIZE][GRID_SIZE]);
+void	addNewNumber(int grid[GRID_SIZE][GRID_SIZE]);
+bool	canMove(int grid[GRID_SIZE][GRID_SIZE]);
+bool	hasWon(int grid[GRID_SIZE][GRID_SIZE]);
+void	initGrid(int grid[GRID_SIZE][GRID_SIZE]);
+void	closeGame(int score);
 
 #endif

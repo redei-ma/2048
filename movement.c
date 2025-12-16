@@ -1,5 +1,5 @@
 #include "game.h"
-#include <stdbool.h>
+
 /* 
  *	PHASE 1: COMPRESS
  *	PHASE 2: MERGE
