@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include <stdbool.h>
 /* 
  *	PHASE 1: COMPRESS
  *	PHASE 2: MERGE
@@ -7,8 +7,9 @@
 */
 
 // Compress a column upwards
-static void compressColumnUp(int grid[GRID_SIZE][GRID_SIZE], int x)
+static bool compressColumnUp(int grid[GRID_SIZE][GRID_SIZE], int x)
 {
+	bool moved = false;
     int writePos = 0;
     for (int y = 0; y < GRID_SIZE; y++)
     {
@@ -16,17 +17,26 @@ static void compressColumnUp(int grid[GRID_SIZE][GRID_SIZE], int x)
         {
             grid[writePos][x] = grid[y][x];
             if (writePos != y)
+			{
                 grid[y][x] = 0;
+				moved = true;
+			}
             writePos++;
         }
     }
+	return moved;
 }
 
 // Move upwards
-void moveUp(int grid[GRID_SIZE][GRID_SIZE], int *score)
+bool moveUp(int grid[GRID_SIZE][GRID_SIZE], int *score)
 {
+	bool moved = false;
+
     for (int x = 0; x < GRID_SIZE; x++)
-        compressColumnUp(grid, x);
+	{
+		if (compressColumnUp(grid, x))
+			moved = true;
+	}
     
     for (int x = 0; x < GRID_SIZE; x++)
     {
@@ -38,17 +48,24 @@ void moveUp(int grid[GRID_SIZE][GRID_SIZE], int *score)
                 *score += grid[y][x];
                 grid[y+1][x] = 0;
                 y++;
+				moved = true;
             }
         }
     }
     
     for (int x = 0; x < GRID_SIZE; x++)
-        compressColumnUp(grid, x);
+	{
+		if (compressColumnUp(grid, x))
+			moved = true;
+	}
+
+	return moved;
 }
 
 // Compress a column downwards
-static void compressColumnDown(int grid[GRID_SIZE][GRID_SIZE], int x)
+static bool compressColumnDown(int grid[GRID_SIZE][GRID_SIZE], int x)
 {
+	bool moved = false;
     int writePos = GRID_SIZE - 1;
     for (int y = GRID_SIZE - 1; y >= 0; y--)
     {
@@ -56,17 +73,26 @@ static void compressColumnDown(int grid[GRID_SIZE][GRID_SIZE], int x)
         {
             grid[writePos][x] = grid[y][x];
             if (writePos != y)
+			{
                 grid[y][x] = 0;
+				moved = true;
+			}
             writePos--;
         }
     }
+	return moved;
 }
 
 // Move downwards
-void moveDown(int grid[GRID_SIZE][GRID_SIZE], int *score)
+bool moveDown(int grid[GRID_SIZE][GRID_SIZE], int *score)
 {
+	bool moved = false;
+
     for (int x = 0; x < GRID_SIZE; x++)
-        compressColumnDown(grid, x);
+	{
+		if (compressColumnDown(grid, x))
+			moved = true;
+	}
     
     for (int x = 0; x < GRID_SIZE; x++)
     {
@@ -78,17 +104,24 @@ void moveDown(int grid[GRID_SIZE][GRID_SIZE], int *score)
                 *score += grid[y][x];
                 grid[y-1][x] = 0;
                 y--;
+				moved = true;
             }
         }
     }
     
     for (int x = 0; x < GRID_SIZE; x++)
-        compressColumnDown(grid, x);
+	{
+		if (compressColumnDown(grid, x))
+			moved = true;
+	}
+	
+	return moved;
 }
 
 // Compress a row to the left
-static void compressRowLeft(int grid[GRID_SIZE][GRID_SIZE], int y)
+static bool compressRowLeft(int grid[GRID_SIZE][GRID_SIZE], int y)
 {
+	bool moved = false;
     int writePos = 0;
     for (int x = 0; x < GRID_SIZE; x++)
     {
@@ -96,17 +129,26 @@ static void compressRowLeft(int grid[GRID_SIZE][GRID_SIZE], int y)
         {
             grid[y][writePos] = grid[y][x];
             if (writePos != x)
+			{
                 grid[y][x] = 0;
+				moved = true;
+			}
             writePos++;
         }
     }
+	return moved;
 }
 
 // Move left
-void moveLeft(int grid[GRID_SIZE][GRID_SIZE], int *score)
+bool moveLeft(int grid[GRID_SIZE][GRID_SIZE], int *score)
 {
+	bool moved = false;
+
     for (int y = 0; y < GRID_SIZE; y++)
-        compressRowLeft(grid, y);
+	{
+		if (compressRowLeft(grid, y))
+			moved = true;
+	}
     
     for (int y = 0; y < GRID_SIZE; y++)
     {
@@ -118,35 +160,52 @@ void moveLeft(int grid[GRID_SIZE][GRID_SIZE], int *score)
                 *score += grid[y][x];
                 grid[y][x+1] = 0;
                 x++;
+				moved = true;
             }
         }
     }
     
     for (int y = 0; y < GRID_SIZE; y++)
-        compressRowLeft(grid, y);
+	{
+		if (compressRowLeft(grid, y))
+			moved = true;
+	}
+	
+	return moved;
 }
 
 // Compress a row to the right
-static void compressRowRight(int grid[GRID_SIZE][GRID_SIZE], int y)
+static bool compressRowRight(int grid[GRID_SIZE][GRID_SIZE], int y)
 {
+	bool moved = false;
     int writePos = GRID_SIZE - 1;
+
     for (int x = GRID_SIZE - 1; x >= 0; x--)
     {
         if (grid[y][x] != 0)
         {
             grid[y][writePos] = grid[y][x];
             if (writePos != x)
-                grid[y][x] = 0;
+			{
+				grid[y][x] = 0;
+				moved = true;
+            }
             writePos--;
         }
     }
+	return moved;
 }
 
 // Move right
-void moveRight(int grid[GRID_SIZE][GRID_SIZE], int *score)
+bool moveRight(int grid[GRID_SIZE][GRID_SIZE], int *score)
 {
+	bool moved = false;
+
     for (int y = 0; y < GRID_SIZE; y++)
-        compressRowRight(grid, y);
+	{
+        if (compressRowRight(grid, y))
+			moved = true;
+	}
     
     for (int y = 0; y < GRID_SIZE; y++)
     {
@@ -158,10 +217,16 @@ void moveRight(int grid[GRID_SIZE][GRID_SIZE], int *score)
                 *score += grid[y][x];
                 grid[y][x-1] = 0;
                 x--;
+				moved = true;
             }
         }
     }
     
     for (int y = 0; y < GRID_SIZE; y++)
-        compressRowRight(grid, y);
+	{
+	if (compressRowRight(grid, y))
+		moved = true;
+	}
+	
+	return moved;
 }
