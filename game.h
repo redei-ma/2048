@@ -7,4 +7,9 @@ enum e_const
 	GRID_SIZE = 4
 };
 
+void moveUp(int grid[GRID_SIZE][GRID_SIZE], int *score);
+void moveDown(int grid[GRID_SIZE][GRID_SIZE], int *score);
+void moveLeft(int grid[GRID_SIZE][GRID_SIZE], int *score);
+void moveRight(int grid[GRID_SIZE][GRID_SIZE], int *score);
+
 #endif
